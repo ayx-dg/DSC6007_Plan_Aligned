@@ -139,14 +139,17 @@ incremental on matched feedback, with dense recomputation of $S^{-1}$ when
 needed. Tests check the joint solve and the literal Algorithm 2 variance.
 
 \paragraph{Feature fidelity to the source paper.}
-Li et al. (2010, Sec.~5.2.2) binarise and unit-normalise the raw
-categorical vectors before a conjoint reduction to six dimensions. The
-R6A files expose only the resulting six user and six article coordinates,
-not the upstream projection. We therefore build $z_{t,a}$ from the
-supplied six-vectors as-is; the paper's unit-length step precedes
-dimensionality reduction and does not apply to the final six features.
-This is the one deliberate preprocessing deviation; the 36-dimensional
-shared structure is preserved.
+Li et al. (2010, Sec.~5.2.2, Algorithms 1--2) first encode raw categorical features as
+``binary vectors'' and normalise them ``to unit length'', and only then
+carry out the ``conjoint analysis'' that yields the final six-vector; the
+source says this reduction is done ``to further reduce dimensionality''.
+The R6A files expose only the resulting six user and six article
+coordinates, not the upstream projection. We therefore build $z_{t,a}$
+from the supplied six-vectors as-is: the unit-length step acts on the
+1000+-dimensional raw vectors \emph{before} reduction, not on the six
+delivered features, so no second normalisation is applied. This is the one
+deliberate preprocessing deviation; the 36-dimensional shared structure
+is preserved.
 
 \paragraph{Disambiguating $x_{t,a}$, and two distinct greedy baselines.}
 Li et al. (2010, Sec.~5.2.2) state that $x_{t,a}$ is ``exactly the
@@ -298,7 +301,7 @@ All values are produced by the included programs in the frozen environment.
 
 \section{Results}
 \subsection{Yahoo held-out replay: no established winner}
-\begin{table}[htbp]\centering\small\caption{Yahoo test: selected settings, seed 2026 for stochastic rows. Match rate and CTR are percentages; the interval is nominal only.}\begin{tabular}{lrrrrr}
+\begin{table}[htbp]\centering\small\caption{Yahoo test, seed 2026 for stochastic rows. Each row has 22--30 clicks on its own match set: CTR gaps of a few tenths are within sampling noise. Wilson ranges are nominal.}\begin{tabular}{lrrrrr}
 \toprule
 Policy & Matches & Clicks & Match rate & Replay CTR & Wilson range \\ \midrule
 Random & 777 & 28 & 4.92 & 3.604 & [2.50, 5.16] \\
@@ -342,7 +345,7 @@ uniformly subsample the 84,214-event warmup to 100/10/5/1\% (seed 2026);
 both LinUCB policies keep $\alpha=0.5$, so only warmup size changes
 (Table~\ref{tab:sparse}).
 
-\begin{table}[htbp]\centering\small\caption{Sparse warmup diagnostic on the fixed Yahoo test split. CTR is a matched-sample percentage; the last column is Hybrid minus Disjoint in percentage points.}\label{tab:sparse}\begin{tabular}{lrrrr}
+\begin{table}[htbp]\centering\small\caption{Sparse warmup diagnostic, fixed test, one subsampling (seed 2026; 19--30 clicks/cell). CTR is a matched-sample percentage; H--D spans $-0.522$ to $+0.090$ pp (descriptive, not a repeated-sampling interval).}\label{tab:sparse}\begin{tabular}{lrrrr}
 \toprule
 Warmup & Disjoint (m/clicks/CTR) & Hybrid (m/clicks/CTR) & H--D (pp) & Articles updated \\ \midrule
 100\% & 780 / 30 / 3.846 & 788 / 30 / 3.807 & $-0.039$ & 21 \\
@@ -352,9 +355,10 @@ Warmup & Disjoint (m/clicks/CTR) & Hybrid (m/clicks/CTR) & H--D (pp) & Articles 
 \bottomrule\end{tabular}\end{table}
 
 Hybrid minus Disjoint is negative at three of four warmup levels and never
-exceeds $+0.09$ pp: the paper's sparse-data advantage is not reproduced.
-Warmup shrinkage reduces updated articles from 21 to 20 without helping
-hybrid.
+exceeds $+0.09$ pp. This is one subsampling (seed 2026): we report a
+descriptive observation, not a repeated-sampling interval; the paper's
+sparse-data advantage is not reproduced on this log. Warmup shrinkage
+reduces updated articles from 21 to 20 without helping hybrid.
 
 \begin{figure}[htbp]\centering
 \includegraphics[width=\linewidth]{sparsity/sparsity.pdf}
@@ -380,9 +384,9 @@ unnecessary when ranking by probability, and classification and replay
 answer different questions. The separate OPE check has 20,000 contexts,
 four actions, a fixed target and a uniform logger with known $p=0.25$;
 the independent reward model is constant 0.5. Oracle target mean is
-0.538374, IPS 0.535600, SNIPS 0.539267, DR 0.539000. Agreement in one
-realisation is a sanity check, not a variance or unbiasedness proof (SNIPS
-remains finite-sample biased).
+0.538374, IPS 0.535600, SNIPS 0.539267, DR 0.539000. This is one fixed-seed (981) numerical illustration, with no repeated draws
+or variance; we make no estimator-consistency claim (SNIPS is finite-sample
+biased).
 
 \subsection{Original preference-drift experiment}
 \begin{table}[htbp]\centering\small\caption{Original poster study: mean $\pm$ sample SD of dynamic regret, 10 seeds per scenario.}\begin{tabular}{lrrr}
@@ -417,7 +421,8 @@ intercept7 & Window LinUCB (300) & 227.58 $\pm$ 20.02 & 270.60 $\pm$ 20.62 & 223
 \bottomrule\end{tabular}\end{table}
 
 With six features, Window LinUCB (300) has stationary regret 149.95 versus
-168.08 for LinUCB (disjoint), matching the poster direction. Adding the
+168.08 for LinUCB (disjoint) --- qualitatively the poster direction, though
+different seeds and feature maps make this non-paired. Adding the
 intercept reverses that ordering (227.58 vs 156.18), yet with the
 intercept the window still cuts abrupt regret 493.89 to 270.60 and gradual
 regret 415.19 to 223.17. Adaptation gains survive this specification
@@ -511,16 +516,44 @@ predeclared off-policy or online design. MIND/Adressa demos and NeuralUCB
 remain extensions, not completed claims.
 
 \section*{Reproducibility and AI assistance}
-The package has source, fourteen tests, core and seed results, the
-sparsity diagnostic and plotting/audit code. \texttt{./run.sh} runs every
-stage with \texttt{uv run --frozen}; \texttt{./build\_report.sh} recompiles
-the PDFs and \texttt{verify\_consistency.py} audits numbers, hashes, pages
-and review freshness. No network is needed once Python 3.13.2 and the
-lockfile are present; hashes and exact versions are in Appendix A and JSON
-manifests. The project is CPU-only; no GPU or API key is needed. AI tools assisted
-drafting, derivation review and supplementary analysis; all numbers come
-from included programs. Assistance does not turn replay into an online
-experiment.
+A reviewer starting from a clean machine needs only \texttt{git} and a
+network connection for the first install (\texttt{pdflatex} only for PDFs);
+no preinstalled toolchain or local knowledge is assumed.
+
+\begin{verbatim}
+curl -LsSf https://astral.sh/uv/install.sh | sh
+export UV="$(command -v uv)"
+git clone https://github.com/ayx-dg/DSC6007_Plan_Aligned.git
+cd DSC6007_Plan_Aligned
+./run.sh
+./build_report.sh
+$UV run --frozen python verify_consistency.py
+\end{verbatim}
+
+\noindent \texttt{run.sh} runs fourteen correctness tests, the Yahoo core
+experiment (seed 2026), the 30-seed sweep (2026--2055), the 20-seed extension
+(100--119), the sparsity diagnostic, figures and the audit, all through
+\texttt{uv run --frozen} with single-threaded BLAS and
+\texttt{PYTHONHASHSEED=0}; raw logs are included, so no data download is
+needed after the first install. Expected audit output:
+\texttt{CONSISTENCY CHECK PASSED correctness\_tests=14 report\_pages=10}
+(plus \texttt{review\_artifacts\_local\_only} in a fresh public clone).
+
+\begin{sloppypar}
+\noindent PDFs need a TeX distribution with \texttt{amsmath},
+\texttt{booktabs}, \texttt{geometry}, \texttt{hyperref}; on Debian/Ubuntu:
+\texttt{sudo apt-get install -y texlive-latex-base}
+\texttt{texlive-latex-extra} \texttt{texlive-fonts-recommended}
+\texttt{texlive-pictures}. On non-x86-64 machines, comment out
+\texttt{OPENBLAS\_CORETYPE=Haswell} if BLAS errors; last-digit differences
+do not change conclusions. Seeds, hyperparameter grids, hashes and artifacts
+are in Appendix A. CPU-only; no GPU or API key.\par
+\end{sloppypar}
+
+\noindent AI tools assisted drafting, derivation review and supplementary
+analysis only; they did not generate numbers or replace the code. Every
+reported value comes from the included programs, and assistance does not turn
+a logged replay into an online experiment.
 
 \begin{thebibliography}{9}\footnotesize\setlength{\itemsep}{2pt}\setlength{\parskip}{0pt}
 \bibitem{li2010} L. Li, W. Chu, J. Langford, and R. E. Schapire.
@@ -560,6 +593,14 @@ Core stochastic seed / seed sweep & 2026 / 2026--2055 \\
 Original / independent simulation seeds & 0--9 / 100--119 \\
 Simulation horizon / candidates & 3,000 / 6 \\
 Independent configurations / trajectories & 12 / 720 \\
+Ridge prior / UCB width & unit ridge; $\alpha$ chosen on validation \\
+Selected: disjoint / hybrid $\alpha$ & 0.5 / 0.5 \\
+Selected: contextual / context-free $\epsilon$ & 0.05 / 0.05 \\
+Selected: window length ($\alpha=1$) & 5,000 logged events \\
+Validation grids: $\alpha$ (disjoint / hybrid) & 0.5,1,2,5,10 / 0.25,0.5,1,2.1,5 \\
+Validation grids: $\epsilon$ / window & 0.05,0.1,0.2 / 1k,5k,10k \\
+Extension / poster $\alpha$; windows & 0.25; 100,300,600; 300 \\
+Sparsity warmup / candidate pool & 100,10,5,1\%; native 20--21, top-50 \\
 Python (locked) & 3.13.2 \\
 NumPy / SciPy & 2.4.3 / 1.17.1 \\
 scikit-learn / matplotlib / joblib & 1.8.0 / 3.10.8 / 1.5.3 \\
@@ -572,6 +613,17 @@ and exact versions, \texttt{uv.lock} records wheel URLs and SHA-256, and
 \texttt{MKL\_NUM\_THREADS=1}, \texttt{OPENBLAS\_CORETYPE=Haswell} and
 \texttt{PYTHONHASHSEED=0}, then uses \texttt{uv run --frozen}; on x86-64
 this fixes the numerical path.
+
+\noindent Verification points. \texttt{core/results.json} holds the seven-policy
+test table, the 30-seed means/SDs and the selected parameters;
+\texttt{robustness/results.json} holds the 20 seeds, window sensitivity,
+intercept ablation and paired intervals; \texttt{sparsity/results.json} holds
+$4\times2\times4=32$ warmup/pool/policy rows.
+\texttt{verify\_consistency.py} rechecks the fourteen tests, the split counts
+(66,204/18,010/15,786), data and source hashes, report numbers, PDF page
+count ($\le 15$; currently 10 for \texttt{report.pdf} and 15 for
+\texttt{slides.pdf}) and review freshness. \texttt{make\_submission.py} packages
+the outputs under the course-required Group 14 names.
 
 \noindent Yahoo log SHA-256:
 \begin{quote}\footnotesize\url{45a5ce2a1f64875389d5a5bcc65be8e95c3b6a91b53757e90b055da49915525f}\end{quote}
