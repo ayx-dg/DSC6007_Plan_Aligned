@@ -46,18 +46,6 @@ DSC6007_Plan_Aligned/          # clone 后的根目录 = 本目录
     └── Group 14.zip
 ```
 
-**不要做的事**（详见 `AGENTS.md`）：
-
-- 不修改 `project_desc.pdf`、报告标题/副标题/课程行/作者/学期；报告上限 15 页。
-- 不改 sibling 目录 `../report`、`../code`；本目录是自包含的。
-- 不把 `contextual greedy` 和论文中的 context-free `ε-greedy` 混称。
-- 不把 paper-judge 的草稿建议直接应用到报告里。
-- 不提交 `.venv/` 或临时产物；它们已在 `.gitignore` 中。
-
-`review_paper_judge.json` 与 `paper_judge_review.md` 是**本地评审证据，故意不公开**
-（已 gitignore）。`verify_consistency.py` 在它们存在时校验审核哈希，在全新 clone
-中则记录跳过说明，不会让公开仓库的自查失败。
-
 ---
 
 ## 从全新机器复现
