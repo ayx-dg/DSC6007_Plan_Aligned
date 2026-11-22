@@ -142,8 +142,7 @@ If you are an agent, see [AGENTS.md](AGENTS.md) for contributing rules.
   `sparsity/results.json` 中找到；哈希和精确版本在报告 Appendix A 与相应 manifest。
 - `submission/` 中的文件按课程要求命名为 `Group 14 ...`，`Group 14.zip` 是最终
   提交包；它由 `make_submission.py` 从当前 PDF/源码重新生成。
-- paper-judge 的 C1–C5 草稿只在本地保留，不随公开仓库分发；草稿建议由 owner
-  判断后再决定是否纳入报告修订。
+- paper-judge 的 C1–C5 草稿只在本地保留，不随公开仓库分发。
 
 如果只想核对结论，直接打开 `report.pdf`：Yahoo 回放没有确立稳定赢家，
 稀疏 warmup 诊断未复现论文的 hybrid 优势，受控漂移中窗口在指定变化下降低遗憾，
