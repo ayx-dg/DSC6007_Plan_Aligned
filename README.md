@@ -98,16 +98,9 @@ cd DSC6007_Plan_Aligned
 > `OPENBLAS_CORETYPE=Haswell` 以锁定数值路径。若出现 BLAS 报错或非法指令，请先把
 > 这一行注释掉再运行；末位浮点差异不影响报告结论。
 
-### 4. 重新编译文档（需要 LaTeX）
 
-```bash
-./build_report.sh
-```
 
-产物是 `report.pdf`（10 页）和 `slides.pdf`（15 页）。仓库里已经提交了编译好的
-PDF，所以没有 TeX 环境也可以直接阅读和评分。
-
-### 5. 自查与产物
+### 4. 自查与产物
 
 ```bash
 $UV run --frozen python verify_consistency.py
