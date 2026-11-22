@@ -149,55 +149,9 @@ CONSISTENCY CHECK PASSED correctness_tests=14 report_pages=10
 `AGENTS.md` 的复现契约里，也是自查脚本检查的内容。
 
 ---
+## For Codex
 
-## 组员接手与 Codex 协作
-
-目前组员**尚未加入该 GitHub 仓库**，而且习惯用 Codex 这类 agent 工作。公开仓库
-只能读；写入统一走 **fork + Pull Request**：先 fork 本仓库到自己的 GitHub 账号，
-在自己的 fork 上开发，再开 PR 回本仓库，由 owner 合并。
-
-建议的流程是：
-
-```bash
-# 先在 GitHub 页面 fork https://github.com/ayx-dg/DSC6007_Plan_Aligned
-git clone https://github.com/<你的用户名>/DSC6007_Plan_Aligned.git
-cd DSC6007_Plan_Aligned
-
-# 把原仓库记为 upstream，每次开始工作前先同步
-git remote add upstream https://github.com/ayx-dg/DSC6007_Plan_Aligned.git
-git checkout master
-git pull --rebase upstream master
-
-# 用明确的分支，而不是直接改 master
-git checkout -b codex/<你的主题>
-# 例如：git checkout -b codex/sparsity-figure
-
-# 改完后推到自己的 fork
-git add -A
-git commit -m "Describe the concrete change"
-git push -u origin codex/<你的主题>
-# 然后在 GitHub 上从你的 fork 向 ayx-dg/master 开 PR，等 owner 合并
-```
-
-**给 Codex agent 的交接顺序**（让双方电脑上的行为一致）：
-
-1. 先读 `README.md` 和 `AGENTS.md`，再碰代码。`AGENTS.md` 是权威约定：命名、
-   数据哈希、切分、种子、报告身份、已知偏差与"评审建议不自动应用"都写在那里。
-2. agent 的工作目录就是 clone 根目录；不要试图寻找 `hybrid_aligned/` 子目录。
-3. 新成员用**自己的 git 身份**提交。历史提交是本地 agent 用 `ayx <>` 生成的，
-   不要 amend / rebase 改写它。
-4. 改了源码就必须按 `AGENTS.md` 的链条走完整轮：
-   `./run.sh` → `./build_report.sh` → 更新 `report.tex` 里的哈希/数字 →
-   `verify_consistency.py`。只改图或报告文字也要重新编译 PDF。
-5. 环境按上面的"全新机器复现"一节安装；`uv.lock` 已锁定，不要运行
-   `uv lock --upgrade`，也不要提交 `.venv/`。
-6. 本地 owner 保留 paper-judge 草稿用于复核，但它们不进公开仓库；agent 不应把
-   草稿里的建议当作待办事项。
-
-这样，本地目录保持事实源，组员的 fork 是同一套文件，老师看到的公开仓库
-又是同一套文件——没有"我电脑能跑、你电脑跑不了"的隐藏前提。
-
----
+If you are an agent, see [AGENTS.md](AGENTS.md) for contributing rules.
 
 ## 报告与仓库的对应
 
