@@ -24,7 +24,7 @@ notes.append(f'correctness_tests={ntests}')
 
 # 2. Required artifacts and JSON schemas.
 required=['run.sh','build_report.sh','report.tex','report.pdf','slides.tex','slides.pdf',
-          'AGENTS.md','project_desc.pdf','review_paper_judge.json','paper_judge_review.md',
+          'AGENTS.md','README.md','project_desc.pdf',
           'core/results.json','robustness/results.json','sparsity/results.json',
           'reproduction/experiments.py','references/li2010_contextual_bandit_news.pdf',
           'references/li2011_unbiased_offline_eval.pdf']
@@ -35,7 +35,10 @@ if any((ROOT/r).exists() is False for r in required):
 core=json.loads((ROOT/'core/results.json').read_text())
 rob=json.loads((ROOT/'robustness/results.json').read_text())
 spa=json.loads((ROOT/'sparsity/results.json').read_text())
-review=json.loads((ROOT/'review_paper_judge.json').read_text())
+# Paper-judge drafts are local-only review evidence. A fresh clone will not
+# have them, so their checks are conditional and never fail a public checkout.
+review_path=ROOT/'review_paper_judge.json'
+review=json.loads(review_path.read_text()) if review_path.exists() else None
 
 for key in ['random','disjoint','hybrid','contextual_greedy','epsilon_greedy','window','logistic']:
     check(key in core['test'],'core test missing '+key)
@@ -67,9 +70,12 @@ for h in [core['data']['log_sha256'],core['data']['article_sha256'],
     check(h in tex,'Report missing current source/data hash: '+h[:12])
 check('⊮' not in tex,'Report contains undefined glyph')
 check('\\mathbb' not in tex and 'amssymb' not in tex,'Report uses unsupported math package/glyph')
-review_ids={c.get('id') for c in review.get('criteria',[])}
-for key in ['C1','C2','C3','C4','C5']:
-    check(key in review_ids,'paper-judge review missing '+key)
+if review is not None:
+    review_ids={c.get('id') for c in review.get('criteria',[])}
+    for key in ['C1','C2','C3','C4','C5']:
+        check(key in review_ids,'paper-judge review missing '+key)
+else:
+    notes.append('review_artifacts_local_only: public clone skips review checks')
 
 # 4. PDF pages and warnings.
 if shutil.which('pdfinfo'):
@@ -86,10 +92,11 @@ if log.exists():
     for token in ['Overfull \\hbox','Undefined control sequence','LaTeX Warning: Citation']:
         if token in txt:errors.append('LaTeX warning: '+token)
 
-review_hash=review.get('reviewed_pdf_sha256')
-if review_hash!=sha(ROOT/'report.pdf'):
-    notes.append('review_pdf_hash_stale_or_unset: refresh paper-judge after report edits')
-else:notes.append('review_pdf_hash_matches=true')
+if review is not None:
+    review_hash=review.get('reviewed_pdf_sha256')
+    if review_hash!=sha(ROOT/'report.pdf'):
+        notes.append('review_pdf_hash_stale_or_unset: refresh paper-judge after report edits')
+    else:notes.append('review_pdf_hash_matches=true')
 
 if errors:
     print('CONSISTENCY CHECK FAILED')

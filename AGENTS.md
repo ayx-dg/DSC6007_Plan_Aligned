@@ -73,6 +73,13 @@ against that PDF. The report must retain the exact identity:
 - Submit the current `report.pdf` to `https://paper-judge.netlify.app/` via the
   browser and save C1–C5 in `review_paper_judge.json` and
   `paper_judge_review.md`, including the reviewed PDF hash. Suggestions are
-  recorded, never auto-applied.
-- Git commits in this folder use user name `ayx` and no email address. Push only
-  to the repository associated with that identity.
+  recorded, never auto-applied. These two draft files are **local review
+  evidence only**: they are gitignored and deliberately absent from the public
+  repository. `verify_consistency.py` checks them when present and otherwise
+  records a skip note, so a fresh clone still passes.
+- The existing history was created locally with `user.name=ayx` and an empty
+  email. Do not rewrite that history. New collaborators must commit with their
+  own git identity, work on a branch, and open a pull request as described in
+  `README.md`; push only to the team repository `ayx-dg/DSC6007_Plan_Aligned`.
+- The public repository root **is** this `hybrid_aligned/` directory. A clone
+  lands directly in these files; there is no extra `hybrid_aligned/` layer.

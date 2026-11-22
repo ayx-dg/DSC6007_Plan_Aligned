@@ -11,3 +11,7 @@ __pycache__/
 *.fdb_latexmk
 *.fls
 .reproducibility/
+# Paper-judge drafts are local review evidence, deliberately excluded from the
+# public repository; see README.md. Keep them only on the owner's machine.
+review_paper_judge.json
+paper_judge_review.md
