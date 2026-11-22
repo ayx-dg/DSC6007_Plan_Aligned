@@ -153,31 +153,30 @@ CONSISTENCY CHECK PASSED correctness_tests=14 report_pages=10
 ## 组员接手与 Codex 协作
 
 目前组员**尚未加入该 GitHub 仓库**，而且习惯用 Codex 这类 agent 工作。公开仓库
-只能读；要写入有两条路：
+只能读；写入统一走 **fork + Pull Request**：先 fork 本仓库到自己的 GitHub 账号，
+在自己的 fork 上开发，再开 PR 回本仓库，由 owner 合并。
 
-1. 请 owner（`ayx-dg`）在 `Settings → Collaborators` 把你加成 collaborator；
-   之后可以直接推分支。
-2. 或者先 fork，在自己的 fork 上开发，再开 Pull Request 回本仓库。
-
-无论哪条路，建议的流程是：
+建议的流程是：
 
 ```bash
-git clone https://github.com/ayx-dg/DSC6007_Plan_Aligned.git
+# 先在 GitHub 页面 fork https://github.com/ayx-dg/DSC6007_Plan_Aligned
+git clone https://github.com/<你的用户名>/DSC6007_Plan_Aligned.git
 cd DSC6007_Plan_Aligned
 
-# 开始工作前先同步
+# 把原仓库记为 upstream，每次开始工作前先同步
+git remote add upstream https://github.com/ayx-dg/DSC6007_Plan_Aligned.git
 git checkout master
-git pull --rebase origin master
+git pull --rebase upstream master
 
 # 用明确的分支，而不是直接改 master
 git checkout -b codex/<你的主题>
 # 例如：git checkout -b codex/sparsity-figure
 
-# 改完后
+# 改完后推到自己的 fork
 git add -A
 git commit -m "Describe the concrete change"
 git push -u origin codex/<你的主题>
-# 然后在 GitHub 上开 PR，等 owner 合并
+# 然后在 GitHub 上从你的 fork 向 ayx-dg/master 开 PR，等 owner 合并
 ```
 
 **给 Codex agent 的交接顺序**（让双方电脑上的行为一致）：
@@ -195,7 +194,7 @@ git push -u origin codex/<你的主题>
 6. 本地 owner 保留 paper-judge 草稿用于复核，但它们不进公开仓库；agent 不应把
    草稿里的建议当作待办事项。
 
-这样，本地目录保持事实源，组员的 clone/fork 是同一套文件，老师看到的公开仓库
+这样，本地目录保持事实源，组员的 fork 是同一套文件，老师看到的公开仓库
 又是同一套文件——没有"我电脑能跑、你电脑跑不了"的隐藏前提。
 
 ---
