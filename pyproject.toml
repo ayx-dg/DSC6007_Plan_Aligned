@@ -1,0 +1,12 @@
+[project]
+name = "dsc6007-hybrid-bandit"
+version = "0.1.0"
+description = "Li et al. 2010 Disjoint and Hybrid LinUCB on chronological Yahoo R6A replay"
+requires-python = "==3.13.2"
+dependencies = [
+  "numpy==2.4.3",
+  "scipy==1.17.1",
+  "scikit-learn==1.8.0",
+  "matplotlib==3.10.8",
+  "joblib==1.5.3",
+]

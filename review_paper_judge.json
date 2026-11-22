@@ -1,0 +1,377 @@
+{
+  "criteria": [
+    {
+      "id": "C1",
+      "anchor": "full",
+      "awardedPoints": 2,
+      "uncertainty": "low",
+      "evidence": [
+        {
+          "quote": "A news service sees a user and candidate articles, shows one, and observes a click; rewards for unshown items stay unobserved. Contextual bandits address this exploration–exploitation problem [1], but personalisation alone fails when interests move: using all past feedback may adapt slowly, while discarding old data trades tracking against estimation precision.",
+          "locationHint": "1.1 Motivation and research questions"
+        },
+        {
+          "quote": "We ask (Q1) what the policies achieve under the Yahoo protocol, (Q2) whether a recent-data window improves tracking under known change, and (Q3) how feature specification and window size affect that conclusion.",
+          "locationHint": "1.1 Motivation and research questions"
+        },
+        {
+          "quote": "The project applies contextual bandits, optimistic exploration, ridge estimation and non-stationary sequential decisions.",
+          "locationHint": "1.2 Course connection, related work and contributions"
+        },
+        {
+          "quote": "Contributions: faithful Algorithms 1–2 checked against the joint ridge solution; a chronological Yahoo-plus-drift design; and an independent simulation extension. Negative results are retained; no new theorem or online gain is claimed.",
+          "locationHint": "1.2 Course connection, related work and contributions"
+        },
+        {
+          "quote": "The conclusion is conditional: forgetting helps the tested drift worlds, but offline CTR and simulated regret do not establish online gain.",
+          "locationHint": "6 Conclusion and concrete extensions"
+        }
+      ],
+      "strengths": [
+        "研究问题明确：在部分点击反馈与偏好漂移下如何做新闻推荐，并拆成 Q1–Q3 三个可检验子问题。",
+        "动机与重要性（Why / So What）交代清楚：未展示项奖励不可观测、全历史反馈适应慢、丢弃旧数据牺牲估计精度，构成 exploration–exploitation 与 bias–precision 的张力。",
+        "核心思想可一句话概括：用忠实实现的 Disjoint/Hybrid LinUCB 加窗口机制，在 Yahoo 回放与已知均值的漂移模拟中检验遗忘是否有助于跟踪。",
+        "明确说明与课程的关联（contextual bandits、optimistic exploration、ridge estimation、非平稳序列决策），契合课程选题范围。",
+        "贡献与边界陈述克制，明确保留负结果、不宣称新定理或在线收益。"
+      ],
+      "concerns": [
+        {
+          "severity": "minor",
+          "location": "1.2 Course connection, related work and contributions",
+          "observation": "课程关联以一句列举式表述给出，未进一步说明本项目相对课程讲授内容（如 Bellman/SSP/平均代价 MDP 等）的具体落点。",
+          "whyItMatters": "C1 要求选题契合度有说明；当前说明成立但较简略，读者需自行把 contextual bandit 与课程框架对应起来。",
+          "requestedAction": "可在 1.2 补一两句，说明该问题在课程框架中的位置（如 bandit 作为无状态 MDP 的特例、非平稳性与 Bellman 更新的关系）。"
+        },
+        {
+          "severity": "suggestion",
+          "location": "1.1 Motivation and research questions",
+          "observation": "动机以新闻推荐场景切入，但未给出该场景为何在方法上困难的具体量化背景（如候选规模、反馈稀疏程度）。",
+          "whyItMatters": "更强的动机铺垫能让 Q1–Q3 的必要性更直观。",
+          "requestedAction": "可在 1.1 用一两句点出候选集规模与点击稀疏性（正文 3.1 已有 20/21 候选、2.807% CTR 等数据），前置支撑动机。"
+        }
+      ],
+      "rationale": "报告在 1.1 明确给出研究问题（Q1–Q3）、动机与重要性（未观测奖励、偏好漂移下的跟踪与精度权衡），1.2 明确说明与课程的关联并列出贡献，结论段可用一句话概括核心思想（遗忘在受控漂移世界中有效、但离线回放与模拟不足以证明在线收益），且选题属于课程范围（contextual bandit / 非平稳序列决策）。未发现虚构引用或过度宣称（作者反复声明不宣称在线收益、不虚构 propensities），C5 不触发降档；C3 相关（seed、误差棒）在正文 3.2/3.4 有报告，不构成 C1 降档理由。故评 full。"
+    },
+    {
+      "id": "C2",
+      "anchor": "substantial",
+      "awardedPoints": 1.8,
+      "uncertainty": "low",
+      "evidence": [
+        {
+          "quote": "Aa,t = λI + ∑\ni∈Ia,t\nxix⊤\ni , ba,t = ∑\ni∈Ia,t\nrixi, ˆθa,t = A−1\na,t ba,t.",
+          "locationHint": "2.2 Disjoint LinUCB, Eq. (2)"
+        },
+        {
+          "quote": "S = A0 − ∑\na\nB⊤\na A−1\na Ba.",
+          "locationHint": "2.3 Hybrid LinUCB, Eq. (5)"
+        },
+        {
+          "quote": "or equivalently st,a = x⊤A−1\na x + (z − B⊤\na A−1\na x)⊤S−1(z − B⊤\na A−1\na x); the score is z⊤ ˆβ + x⊤ ˆθa + α√st,a.",
+          "locationHint": "2.3 Hybrid LinUCB, Eq. (7)"
+        },
+        {
+          "quote": "The confidence reading needs a bounded, correctly specified linear mean and sub-Gaussian noise; our validation-\nselected α is heuristic, not calibrated coverage.",
+          "locationHint": "2.2 Disjoint LinUCB"
+        },
+        {
+          "quote": "The identity is algebraic and holds under misspecification.",
+          "locationHint": "2.4 Window adaptation, Eq. (8)"
+        },
+        {
+          "quote": "Eq. (9) is affine but the original six context coordinates lack an intercept, so its through-origin policies\nare misspecified.",
+          "locationHint": "3.3 Drift study"
+        },
+        {
+          "quote": "Replay can evaluate deterministic policies under uniform random logging and candidate-set conditions [2];\ndeterminism alone is not the problem.",
+          "locationHint": "2.5 Replay, predictive metrics and off-policy checks"
+        },
+        {
+          "quote": "This is the one deliberate preprocessing deviation; the 36-dimensional shared structure is preserved.",
+          "locationHint": "2.3 Feature fidelity to the source paper"
+        }
+      ],
+      "strengths": [
+        "Disjoint 与 Hybrid LinUCB 的 ridge 估计、Schur 补与联合最小二乘解（Eq. 2/5/6）表述正确，并给出等价的预测方差形式（Eq. 7），与 Li et al. 2010 Algorithm 2 一致。",
+        "显式列出关键假设（有界线性均值、sub-Gaussian 噪声、α 为启发式而非校准覆盖），并说明 replay 仅在均匀随机 logging 与候选集条件下有效，未虚构 propensities。",
+        "Eq. (8) 的偏差-精度恒等式推导正确且注明在 misspecification 下仍成立，并明确其为条件性动机而非定理。",
+        "应用层面实质：chronological Yahoo replay、sparse warmup 诊断、intercept ablation 与 window 敏感性构成自洽的验证链，且保留负结果。",
+        "引用可核：Li et al. 2010/2011、Cheung 2019、Russac 2019、Zhao 2020、Faury 2021、Dudik 2011 均为可查顶会/期刊出处。"
+      ],
+      "concerns": [
+        {
+          "severity": "major",
+          "location": "2.3 Hybrid LinUCB 与 4.1/4.2 结果",
+          "observation": "Hybrid 的 36 维共享特征 z 由 R6A 提供的六维向量直接构造，作者承认偏离原文的 unit-normalise 预处理；同时 Eq. (4) 的分解假设未做检验，Hybrid 与 Disjoint 的对比因此混杂了特征构造差异。",
+          "whyItMatters": "形式化虽正确，但应用实现与原文特征管线不完全一致，削弱了「faithful Algorithms 1–2」的 claim 与 Hybrid 结论的可比性。",
+          "requestedAction": "在正文明确标注该偏差对 Hybrid 估计的潜在影响，或补充一个使用原文归一化近似的敏感性对照。"
+        },
+        {
+          "severity": "minor",
+          "location": "2.4 Window adaptation",
+          "observation": "窗口规则仅给出条件性动机，未给出任何 tracking 误差或 regret 的界，Eq. (8) 的 stale-data 项未加 variation/support 假设界定。",
+          "whyItMatters": "理论深度停留在恒等式层面，缺少对「短窗口何时更优」的可证条件，结论依赖经验。",
+          "requestedAction": "在 Discussion/Theory 中明确该恒等式不构成保证，并指出所需 variation budget 假设（已在 Conclusion 提及，可前移强化）。"
+        },
+        {
+          "severity": "minor",
+          "location": "3.3 Drift study, Eq. (9)",
+          "observation": "模拟器 μt(a) 的 affine 映射在六维无截距下 misspecified，作者以 intercept7 消融补救，但未给出该 misspecification 对 regret 排序影响的理论分析。",
+          "whyItMatters": "应用结论（window 在 drift 下有益）部分依赖一个已知 misspecified 的生成过程。",
+          "requestedAction": "在正文说明 intercept7 结果如何界定该 misspecification 的影响范围，避免过度外推。"
+        }
+      ],
+      "rationale": "报告给出了正确的 MDP/contextual bandit 形式化、Disjoint 与 Hybrid LinUCB 的 ridge 解与联合 Schur 补推导、等价的预测方差表达式，以及 Eq. (8) 的代数恒等式，关键假设（有界线性均值、sub-Gaussian、α 启发式、replay 条件）显式列出且合理，应用实现（Yahoo replay、drift 模拟、ablation）逻辑自洽并保留负结果，引用为可核实的 2010–2021 顶会/期刊出处。存在少量不影响主结论的瑕疵：Hybrid 特征预处理偏离原文、窗口规则缺理论界、模拟器 misspecification。按 C3 规则，正文报告了 seed 2026 与 2026–2055、0–9、100–119 及 mean±SD，满足复现要求；C5 未见明显过度宣称或虚构引用。综合落在 substantial 锚点。"
+    },
+    {
+      "id": "C3",
+      "anchor": "partial",
+      "awardedPoints": 1.05,
+      "uncertainty": "low",
+      "evidence": [
+        {
+          "quote": "Core stochastic results use seed 2026.",
+          "locationHint": "3.2 Model selection and test protocol"
+        },
+        {
+          "quote": "The extension uses seeds 100–119, policy RNG seeds 50,000 + s, windows 100/300/600 and a contextual-greedy control (ϵ = 0.05), fixed before running.",
+          "locationHint": "3.3 Drift study and independent extension"
+        },
+        {
+          "quote": "Tables show mean ± sample SD; plotted intervals use Student-t critical values and are pointwise, not simultaneous.",
+          "locationHint": "3.4 Uncertainty and implementation checks"
+        },
+        {
+          "quote": "Across seeds 2026–2055, mean replay CTR is 2.692% (SD 0.618 pp) for Random, 2.993% (0.556) for contextual greedy and 2.886% (0.622) for context-free ϵ-greedy.",
+          "locationHint": "4.1 Yahoo held-out replay"
+        },
+        {
+          "quote": "Table 5: Independent seeds 100–119: mean ± sample SD of regret, 20 worlds.",
+          "locationHint": "4.5 Independent seeds, intercept ablation and memory sensitivity"
+        },
+        {
+          "quote": "Table 6: Window LinUCB (300) minus LinUCB (disjoint): paired differences and approximate 95% family intervals adjusted for six contrasts.",
+          "locationHint": "4.5 Independent seeds, intercept ablation and memory sensitivity"
+        },
+        {
+          "quote": "The independent unit is a generated world: ten originally, twenty in the extension.",
+          "locationHint": "3.4 Uncertainty and implementation checks"
+        },
+        {
+          "quote": "The package has source, fourteen tests, core and seed results, the sparsity diagnostic and plotting/audit code.",
+          "locationHint": "Reproducibility and AI assistance"
+        },
+        {
+          "quote": "pyproject.toml pins Python 3.13.2 and exact versions, uv.lock records wheel URLs and SHA-256",
+          "locationHint": "Appendix A Data and execution manifest"
+        },
+        {
+          "quote": "Figure 1: Left: single-seed matched CTR with nominal Wilson ranges, which omit selection uncertainty. Right: 30-seed CTRs for Random, contextual greedy and context-free ϵ-greedy; markers are mean ± SD, not a population interval.",
+          "locationHint": "Figure 1 caption"
+        }
+      ],
+      "strengths": [
+        "baseline 覆盖充分：Random、context-free ϵ-greedy、contextual greedy、Disjoint/Hybrid LinUCB、Window LinUCB 与 Logistic regression 预测基线并列比较，且明确区分预测基线与因果比较。",
+        "独立重复与误差报告规范：Yahoo 随机策略用 seeds 2026–2055，模拟用 seeds 0–9 与 100–119，表格给出 mean ± sample SD，并说明 t 区间为 pointwise、Bonferroni 校正六个 contrast。",
+        "消融与敏感性分析到位：intercept7 vs original6 特征消融、window 100/300/600 敏感性、sparse warmup 100/10/5/1% 诊断、50-article pool 敏感性检查。",
+        "指标-论断对齐谨慎：明确 matched replay CTR 为描述性、非无偏部署值，不据 30 clicks 宣称排序或在线收益，负结果保留。",
+        "可复现性细节充分：锁定 Python 3.13.2 与依赖版本、uv.lock、线程环境变量、数据与源码 SHA-256、run.sh 与 verify_consistency.py。",
+        "图表规范：图注说明误差棒/区间含义、单位（%）、图例与样本量，并标注区间非 simultaneous。",
+        "实现正确性检查：十四项 correctness checks 覆盖 inverse-update、expiry、joint Hybrid solve、Algorithm 2 variance 等。"
+      ],
+      "concerns": [
+        {
+          "severity": "minor",
+          "location": "4.1 Yahoo held-out replay / Table 2",
+          "observation": "Yahoo 主表仅报告 seed 2026 单次实现，确定性 UCB 行无重复；30-seed 仅覆盖三个随机策略。",
+          "whyItMatters": "确定性策略虽无算法随机性，但匹配集与选择不确定性未被量化，读者可能误读单次 CTR 差异。",
+          "requestedAction": "在表注中明确确定性策略不适用 seed 重复的理由，并补充匹配集 bootstrap 或选择不确定性的描述性区间。"
+        },
+        {
+          "severity": "minor",
+          "location": "4.2 Sparse-data diagnostic / Table 3",
+          "observation": "sparse warmup 诊断仅用 seed 2026 单次子采样，未报告多次子采样的均值与方差。",
+          "whyItMatters": "单次子采样可能使 Hybrid−Disjoint 的符号不稳定，削弱“未复现稀疏优势”结论的稳健性。",
+          "requestedAction": "对每个 warmup 比例做多次独立子采样并报告均值±SD，或说明为何单次已足够。"
+        },
+        {
+          "severity": "suggestion",
+          "location": "4.3 Supervised prediction and the OPE control",
+          "observation": "OPE 检查仅一个 realisation（20,000 contexts、固定 target、uniform logger），未报告 IPS/SNIPS/DR 的方差或重复。",
+          "whyItMatters": "单次一致性只是 sanity check，无法支撑估计器方差性质的讨论。",
+          "requestedAction": "增加多次独立 realisation 的均值与方差，或明确标注为单次 sanity check 并限制结论。"
+        },
+        {
+          "severity": "suggestion",
+          "location": "4.5 / Figure 5",
+          "observation": "window 100/300/600 与 contextual-greedy 控制为描述性、未做多重比较校正，作者已声明。",
+          "whyItMatters": "读者可能将未校正的窗口排序误读为显著差异。",
+          "requestedAction": "在图注或正文再次标注这些比较为探索性、未校正，并避免据此给出窗口选择建议。"
+        }
+      ],
+      "rationale": "报告包含相关且有竞争力的 baseline（Random、context-free ϵ-greedy、contextual greedy、Disjoint/Hybrid LinUCB、Window LinUCB、LR），关键组件有消融（intercept7 vs original6、window 大小、sparse warmup、50-article pool）；多次独立运行并报告随机种子（2026–2055、0–9、100–119）、均值与 sample SD/置信区间；指标与论断对齐谨慎（matched replay CTR 描述性、不宣称在线收益）；超参、环境与实现细节（锁定版本、hash、run.sh）足以复现；图表有单位、图例与误差棒/区间。仅存在单次实现（Yahoo 主表、sparse 子采样、OPE 单 realisation）与未校正探索性比较等 minor/suggestion 级问题，未触发“未报告随机种子/独立重复或缺少误差棒”的降档规则，故评 full。\n[扣分封顶] 因缺少复现说明（随机种子/独立重复/代码或超参），由 full 封顶至 partial。"
+    },
+    {
+      "id": "C4",
+      "anchor": "full",
+      "awardedPoints": 2,
+      "uncertainty": "low",
+      "evidence": [
+        {
+          "quote": "The conclusion is conditional: forgetting helps the tested drift worlds, but offline CTR and simulated regret do not establish online gain.",
+          "locationHint": "6 Conclusion and concrete extensions"
+        },
+        {
+          "quote": "Strengths. The two parts answer complementary questions rather than substituting simulation for logged data.",
+          "locationHint": "5 Discussion: strengths, limits and interpretation"
+        },
+        {
+          "quote": "Limits. Yahoo covers 80 minutes with small matched samples; the logger and candidate construction need further verification for policy-value identification.",
+          "locationHint": "5 Discussion: strengths, limits and interpretation"
+        },
+        {
+          "quote": "Theory. Bound the stale-data term in Eq. (8) under variation and support assumptions, separating tracking, noise and misspecification; address Faury et al. [6] rather than reusing a stationary guarantee.",
+          "locationHint": "6 Conclusion and concrete extensions"
+        },
+        {
+          "quote": "Algorithm. Compare windows with discounted/restarted variants on independent streams; add cold starts, time-varying β and low-rank article embeddings.",
+          "locationHint": "6 Conclusion and concrete extensions"
+        },
+        {
+          "quote": "Application. Obtain longer logs with known candidate support, genuine user IDs and propensities, then use a predeclared off-policy or online design.",
+          "locationHint": "6 Conclusion and concrete extensions"
+        },
+        {
+          "quote": "The negative Yahoo and positive simulation results test different environments and evaluation units, so they do not conflict.",
+          "locationHint": "4.4 Original preference-drift experiment"
+        }
+      ],
+      "strengths": [
+        "结论明确标注为条件性（conditional），并区分离线 replay CTR 与模拟 regret 的证据边界，未宣称 online gain。",
+        "第 5 节单列 Strengths 与 Limits，局限具体（80 分钟日志、匹配样本小、LR 冻结与 bandit 自适应不可比、模拟器缺位置效应/延迟点击、六特征 map 误设、20 worlds 不足以确立通用记忆规则）。",
+        "扩展按 Theory / Algorithm / Application 三层面分别给出，且具体可执行（界定 Eq.(8) stale-data 项、比较 window 与 discounted/restarted、获取带 propensity 的长日志）。",
+        "对不利结果（Yahoo window 未胜出、sparse 诊断未复现 hybrid 优势、enlarged pool 退化）予以保留并解释，未虚构反事实标签或 propensity。"
+      ],
+      "concerns": [
+        {
+          "severity": "minor",
+          "location": "5 Discussion / 6 Conclusion",
+          "observation": "局限与扩展虽具体，但未明确给出各扩展的优先级或可检验的成功判据（如理论界需满足的 variation budget 形式）。",
+          "whyItMatters": "扩展的可执行性可进一步提升为可验收的研究计划。",
+          "requestedAction": "为 Theory/Algorithm/Application 各扩展补一句预期产出或判据（如界的形式、对比的指标与 seed 规模）。"
+        },
+        {
+          "severity": "suggestion",
+          "location": "6 Conclusion",
+          "observation": "结论段对 hybrid 与 window 的负面结果陈述清楚，但未汇总各 claim 的证据强度分级。",
+          "whyItMatters": "有助于读者快速区分已确立与未确立的结论。",
+          "requestedAction": "可用一小表列出 claim 与对应证据（replay / simulation / 未确立）。"
+        }
+      ],
+      "rationale": "报告设有独立的 Strengths、Limits 与 Conclusion 段，结论由 Yahoo replay 与 20-world 模拟证据支撑并明确限定为条件性；扩展分别覆盖理论、算法、应用三层面且具体可执行，符合 full 锚点。C3 方面报告给出 seed 2026、2026–2055、0–9、100–119 及 mean±SD 与 t 区间，未触发降级；C5 方面未见过度宣称或无法核实的引用，故评 full。"
+    },
+    {
+      "id": "C5",
+      "anchor": "full",
+      "awardedPoints": 2,
+      "uncertainty": "low",
+      "evidence": [
+        {
+          "quote": "On Yahoo, Hybrid has 788 matched events and 3.807% replay CTR versus 780 and 3.846% for Disjoint; policy-dependent matched sets preclude a reliable ranking.",
+          "locationHint": "Abstract"
+        },
+        {
+          "quote": "The confidence reading needs a bounded, correctly specified linear mean and sub-Gaussian noise; our validation-selected α is heuristic, not calibrated coverage.",
+          "locationHint": "2.2 Disjoint LinUCB"
+        },
+        {
+          "quote": "This is a conditional motivation, not a theorem that shorter always wins.",
+          "locationHint": "2.4 Window adaptation and the bias–precision trade-off"
+        },
+        {
+          "quote": "Our matched CTRs are descriptive, not unbiased deployment values.",
+          "locationHint": "2.5 Replay, predictive metrics and off-policy checks"
+        },
+        {
+          "quote": "These formulae are checked only in a separate known-propensity simulator; Yahoo propensities are not invented.",
+          "locationHint": "2.5 Replay, predictive metrics and off-policy checks"
+        },
+        {
+          "quote": "Hybrid minus Disjoint is negative at three of four warmup levels and never exceeds +0.09 pp: the paper’s sparse-data advantage is not reproduced.",
+          "locationHint": "4.2 Sparse-data diagnostic"
+        },
+        {
+          "quote": "Agreement in one realisation is a sanity check, not a variance or unbiasedness proof (SNIPS remains finite-sample biased).",
+          "locationHint": "4.3 Supervised prediction and the OPE control"
+        },
+        {
+          "quote": "The negative Yahoo and positive simulation results test different environments and evaluation units, so they do not conflict.",
+          "locationHint": "4.4 Original preference-drift experiment"
+        },
+        {
+          "quote": "Adaptation gains survive this specification check; the stationary benefit does not.",
+          "locationHint": "4.5 Independent seeds, intercept ablation and memory sensitivity"
+        },
+        {
+          "quote": "The conclusion is conditional: forgetting helps the tested drift worlds, but offline CTR and simulated regret do not establish online gain.",
+          "locationHint": "6 Conclusion and concrete extensions"
+        },
+        {
+          "quote": "AI tools assisted drafting, derivation review and",
+          "locationHint": "Reproducibility and AI assistance"
+        },
+        {
+          "quote": "The project is CPU-only; no GPU or API key is needed.",
+          "locationHint": "Reproducibility and AI assistance"
+        }
+      ],
+      "strengths": [
+        "claim 与证据逐条对应：每个核心论断（Hybrid 无 CTR 增益、稀疏优势未复现、window 在漂移下有效但 stationary 增益不稳健、OPE 仅作 sanity check）都指向具体表格、公式或实验设置。",
+        "过度宣称控制极好：反复显式声明边界（matched CTR 为描述性、Wilson 区间为名义、seed 离散度非用户总体不确定性、仿真非在线增益、enlarged pool 非有效 replay）。",
+        "假设与适用边界显式：LinUCB 置信读数的有界/次高斯假设、Eq.(8) 恒等式在 misspecification 下仍成立、window 单位差异（log event vs round）、intercept 缺失导致的 misspecification 均写明。",
+        "叙事连贯：问题→方法→证据→结论链条清晰，负结果保留且与正结果的关系被解释（不同环境/评估单元不冲突）。",
+        "引用可核实：参考文献均为真实可查的公开论文（Li et al. 2010/2011、Cheung、Russac、Zhao、Faury、Dudik），带 arXiv/PMLR 链接，正文引用编号与文献表一致。",
+        "AI 使用被显式披露且限定范围（drafting、derivation review、supplementary analysis），并声明不改变证据性质。"
+      ],
+      "concerns": [
+        {
+          "severity": "minor",
+          "location": "Reproducibility and AI assistance 段末",
+          "observation": "AI 协助说明句在正文末尾被截断（\"AI tools assisted drafting, derivation review and\"），完整表述落在附录。",
+          "whyItMatters": "披露语句不完整会削弱透明度，读者在正文中无法看到 AI 协助的完整范围界定。",
+          "requestedAction": "在正文中补全该句，明确 AI 协助的具体环节与不涉及的部分。"
+        },
+        {
+          "severity": "suggestion",
+          "location": "2.3 Hybrid LinUCB 与 2.4",
+          "observation": "Eq.(7) 的等价形式与 Eq.(8) 的推导仅给出结论式，未展示中间步骤。",
+          "whyItMatters": "虽属代数恒等，但读者难以独立复核，影响证据可追溯性。",
+          "requestedAction": "可在附录补一行关键中间步骤或指向测试文件中的数值校验。"
+        }
+      ],
+      "rationale": "报告对每个核心论断都给出对应的实验、公式或引用支撑，且通篇主动限定结论范围、显式声明假设与适用边界，负结果保留并与正结果做了一致性解释；参考文献均为真实可核实的公开文献，正文引用与文献表对应；AI 使用被显式披露。未发现过度宣称、明显 AI 生成痕迹或无法核实的引用，符合 full 锚点。仅存在 AI 披露句在正文被截断、个别推导步骤未展开两处轻微问题，不构成降档理由。"
+    }
+  ],
+  "draftTotal": 8.85,
+  "overallSummary": "报告完整实现了 Li et al. (2010) 的 Disjoint 与 Hybrid LinUCB，并给出 Yahoo 时序回放、受控漂移仿真与截距消融，方法推导（Schur 补、联合岭解、方差式）与十四项正确性检查扎实，负结果与不确定性说明诚实。主要不足是 Yahoo 匹配样本极小（22–30 次点击）、回放条件未认证，结论只能停留在条件性表述；仿真部分缺少随机种子与超参的集中复现说明。整体属于方法忠实、结论克制的高质量课程报告。",
+  "flags": [
+    "RF4 缺少复现说明：正文未集中给出仿真随机种子（仅零散提及 2026、0–9、100–119）与 LinUCB 宽度等超参的完整清单，复现信息分散在附录与脚本中",
+    "扣分：C3 因「缺少复现说明（随机种子/独立重复/代码或超参）」由「full」封顶至「partial」（1.05 分）。",
+    "附录标题「supplementary analysis; all numbers come from included programs. Assistance does not turn replay into an」出现在第 9 页且与正文同页；已按严格口径将该页计入正文，请人工确认。"
+  ],
+  "pageInfo": {
+    "totalPages": 10,
+    "bodyPages": 9,
+    "appendixStartPage": 9,
+    "marker": "supplementary analysis; all numbers come from included programs. Assistance does not turn replay into an",
+    "detection": "ambiguous",
+    "outlineHint": true
+  },
+  "meta": {
+    "model": "deepseek-chat",
+    "promptVersion": "2026.2",
+    "rubricVersion": "2026.2",
+    "createdAt": "2026-11-22T04:01:05.725Z"
+  },
+  "reviewed_pdf_sha256": "a3518f6fe7a975178b77064812d1c31c626621fc8012dafac501a18a040bd0a3"
+}

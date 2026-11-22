@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.playwright-mcp/
+*.aux
+*.log
+*.out
+*.toc
+*.nav
+*.snm
+*.fdb_latexmk
+*.fls
+.reproducibility/

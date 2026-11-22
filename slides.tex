@@ -1,0 +1,200 @@
+\documentclass[10pt,aspectratio=169]{beamer}
+\usetheme{Madrid}
+\usecolortheme{seahorse}
+\usepackage{amsmath,amssymb,graphicx,booktabs,array}
+\ifPDFTeX\usepackage[T1]{fontenc}\usepackage[utf8]{inputenc}\fi
+\setbeamertemplate{navigation symbols}{}
+\newcommand{\E}{\mathbb{E}}
+\title[Hybrid LinUCB aligned reproduction]{Contextual Bandits for News Recommendation\\under Changing User Preferences}
+\subtitle{Chronological Yahoo Replay and Controlled Drift Experiments}
+\author[LI et al.]{LI Yizhuo \quad ZHANG Tianyi \quad GOU Zhijie \quad AN Yuxian \quad XIAO Yuhang}
+\institute{DSC6007 Dynamic Programming and Reinforcement Learning --- Group 14}
+\date{Semester A 2026}
+\begin{document}
+\input{slides_numbers}
+\maketitle
+
+\begin{frame}{Outline and research questions}
+\begin{enumerate}
+\item Background, course fit and the two Li et al. (2010) estimators.
+\item Chronological Yahoo R6A replay with validation-selected parameters.
+\item Controlled preference drift with known counterfactual means.
+\item Independent seeds, feature ablation, and a sparse-data diagnostic.
+\end{enumerate}
+\vspace{4pt}
+\textbf{Q1.} What do the planned policies achieve on the logged Yahoo slice?\\
+\textbf{Q2.} Does a recent-data window improve tracking under known change?\\
+\textbf{Q3.} How do representation and memory size affect that conclusion?
+\end{frame}
+
+\begin{frame}{Why this topic}
+\begin{columns}
+\column{0.55\textwidth}
+\begin{itemize}
+\item News recommendation is an \emph{advanced multi-armed bandit}: observe a user and candidates, choose one article, see only the chosen click.
+\item Personalisation alone is not enough when user interests move.
+\item Sliding windows trade \emph{tracking} against \emph{precision}.
+\end{itemize}
+\column{0.45\textwidth}
+\textbf{Course mapping}
+\begin{itemize}
+\item Contextual bandits and UCB exploration.
+\item Regularised least squares.
+\item Non-stationary sequential decision making.
+\end{itemize}
+\end{columns}
+\vspace{6pt}
+\emph{So what:} offline matched CTR and simulated regret must not be presented as a verified online gain.
+\end{frame}
+
+\begin{frame}{Li et al. 2010: LinUCB (disjoint), Algorithm 1}
+For each article $a$, ridge regression on the six-dimensional user context $x_{t,a}$:
+\[
+A_{a,t}=\lambda I+\sum_{i\in\mathcal I_{a,t}}x_ix_i^\top,\quad
+b_{a,t}=\sum_{i\in\mathcal I_{a,t}}r_ix_i,\quad
+\hat\theta_{a,t}=A_{a,t}^{-1}b_{a,t}.
+\]
+Selection uses the optimistic score
+\[
+a_t=\arg\max_{a\in\mathcal A_t}\Big[x_{t,a}^\top\hat\theta_{a,t}
++\alpha\sqrt{x_{t,a}^\top A_{a,t}^{-1}x_{t,a}}\Big].
+\]
+Only matched feedback enters $\mathcal I_{a,t}$; an unshown article is never labelled as a non-click.
+\end{frame}
+
+\begin{frame}{Li et al. 2010: Hybrid LinUCB, Algorithm 2}
+\[
+\E[r_{t,a}\mid x_{t,a},z_{t,a}]=z_{t,a}^\top\beta^*+x_{t,a}^\top\theta_a^*,
+\quad z_{t,a}=\operatorname{vec}(u_t v_a^\top)\in\mathbb R^{36}.
+\]
+Joint ridge fit: $A_a=I+\sum xx^\top$, $B_a=\sum xz^\top$, $b_a=\sum rx$;
+$A_0=I+\sum zz^\top$, $b_0=\sum rz$; Schur complement
+\[
+S=A_0-\sum_a B_a^\top A_a^{-1}B_a,\qquad
+\hat\beta=S^{-1}\Big(b_0-\sum_a B_a^\top A_a^{-1}b_a\Big).
+\]
+Full predictive variance (including the cross-term):
+\[
+s_{t,a}=x^\top A_a^{-1}x+(z-B_a^\top A_a^{-1}x)^\top S^{-1}(z-B_a^\top A_a^{-1}x).
+\]
+\end{frame}
+
+\begin{frame}{Resolving the $x_{t,a}$ ambiguity and naming baselines}
+\begin{itemize}
+\item Paper \S5.2.2: $x_{t,a}$ is ``exactly the six-dimensional feature \ldots for user $u_t$'' and ``contains user information only''.
+\item Therefore $x\in\mathbb R^6$ is the user vector; article information enters only through $z\in\mathbb R^{36}$.
+\item Concatenating user and article vectors would contradict the paper and double-count $z$; the implementation is already correct.
+\item \textbf{contextual greedy}: disjoint ridge means, no UCB width, $\epsilon$-explore.
+\item \textbf{$\epsilon$-greedy (context-free)}: empirical article means only, no features (paper \S5.3).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Data, split and evaluation protocol}
+\begin{table}\centering\small
+\begin{tabular}{lrr}
+\toprule Split & Events & Role \\ \midrule
+Development & 66,204 & warm-up / training \\
+Validation & 18,010 & select $\alpha,\epsilon,W,C$, threshold \\
+Test & 15,786 & single chronological evaluation \\ \bottomrule
+\end{tabular}\end{table}
+\begin{itemize}
+\item 100,000 logged events, 80 articles, 20--21 candidates/event, 2.807\% logged CTR, 80 minutes.
+\item Bandits adapt on matched feedback; logistic regression is frozen and trained on development only.
+\item Deterministic UCB gets no extra evidence from seed reruns; 30 algorithm seeds are run on the fixed log for random / contextual greedy / context-free $\epsilon$-greedy.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Yahoo held-out replay: no established winner}
+\begin{table}\centering\small
+\begin{tabular}{lrrrr}
+\toprule Policy & Matched & Clicks & CTR (\%) & Note \\ \midrule
+Random & \RandM & \RandC & \RandCTR & context-free \\
+LinUCB (disjoint) & \DiscM & \DiscC & \DiscCTR & validation $\alpha$ \\
+LinUCB (hybrid) & \HybM & \HybC & \HybCTR & validation $\alpha$ \\
+contextual greedy & \CtxM & \CtxC & \CtxCTR & ridge mean \\
+$\epsilon$-greedy (context-free) & \EpsM & \EpsC & \EpsCTR & article means \\
+Window LinUCB & \WinM & \WinC & \WinCTR & $W$ from validation \\
+Logistic regression & \LogM & \LogC & \LogCTR & frozen model \\ \bottomrule
+\end{tabular}\end{table}
+Matched sets differ; clicks come from different subsets of events. Wilson ranges are descriptive, not policy-value intervals.
+\end{frame}
+
+\begin{frame}{Thirty algorithm seeds on the same fixed log}
+\begin{table}\centering\small
+\begin{tabular}{lrr}
+\toprule Policy & Mean replay CTR & SD (pp) \\ \midrule
+Random & \SeedRand & \SeedRandSD \\
+contextual greedy & \SeedCtx & \SeedCtxSD \\
+$\epsilon$-greedy (context-free) & \SeedCF & \SeedCFSD \\ \bottomrule
+\end{tabular}\end{table}
+\vspace{4pt}
+Seeds 2026--2055. This is algorithm randomness conditional on one log, not uncertainty over users or log samples. The seed-2026 table is one realisation, not the average.
+\end{frame}
+
+\begin{frame}{Controlled preference drift}
+3,000 rounds, six normalised six-dimensional candidate vectors, one unit vector per arm:
+\[
+\mu_t(a)=0.5+0.35(1-2q_t)x_{t,a}^\top\theta_a\in[0.15,0.85].
+\]
+\begin{itemize}
+\item \emph{Stationary}: $q_t=0$. \emph{Abrupt}: sign reversal at round 1,500.
+\item \emph{Gradual}: interpolation from round 1,000 to 2,000, then reversed.
+\item Potential outcomes are shared; each policy trains only on chosen rewards.
+\item Original 10 seeds (0--9); independent 20 seeds (100--119), windows 100/300/600, and an intercept ablation $[1;x]\in\mathbb R^7$.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Drift results: adaptation gains survive specification checks}
+\begin{table}\centering\small
+\begin{tabular}{lrrr}
+\toprule Poster study (10 seeds) & Stationary & Abrupt & Gradual \\ \midrule
+Random & \PostRandS & \PostRandA & \PostRandG \\
+LinUCB (disjoint) & \PostLinS & \PostLinA & \PostLinG \\
+Window LinUCB (300) & \PostWinS & \PostWinA & \PostWinG \\ \bottomrule
+\end{tabular}\end{table}
+\vspace{3pt}
+Independent seeds: with original six features, Window LinUCB (300) reduces abrupt regret from \ExtLinA to \ExtWinA; with an added intercept, from \ExtIntLinA to \ExtIntWinA. The apparent stationary benefit reverses after adding the intercept, so it is not attributed solely to forgetting.
+\end{frame}
+
+\begin{frame}{Sparse-data diagnostic: fixed test, shrinking warmup}
+Paper Table 1 / Figure 3: hybrid gains are concentrated in sparse learning buckets and larger article pools. We hold the 15,786 test events fixed and vary development+validation warmup: 100\%, 10\%, 5\%, 1\%.
+\SparseSummary
+\vspace{3pt}
+The enlarged 50-article candidate set changes the logged candidate distribution; it is a sensitivity diagnostic, not a faithful replay. Small matched samples and shifting match sets still prevent a deployment-value claim.
+\end{frame}
+
+\begin{frame}{Why a window can help: an exact identity}
+For one arm with $r_i=x_i^\top\theta_i+e_i$,
+\[
+\hat\theta_t-\theta_t=A_t^{-1}\Big[
+\sum_{i\in\mathcal I_t}x_ix_i^\top(\theta_i-\theta_t)
++\sum_{i\in\mathcal I_t}x_ie_i-\lambda\theta_t\Big].
+\]
+\begin{itemize}
+\item First term: stale coefficients under drift; shrinking the window reduces it.
+\item Second and third terms: noise/variance and regularisation; shrinking the window can worsen them.
+\item The identity is algebraic, not a theorem that a shorter window always wins.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Rigor, limitations and reproducibility}
+\begin{itemize}
+\item \textbf{Strengths:} faithful Algorithms 1--2, joint-ridge and variance correctness checks, chronological split, validation-only tuning, independent worlds, 14 tests, frozen Python 3.13.2 environment.
+\item \textbf{Limits:} 80-minute log, 25--30 matched clicks per policy, no propensities, adaptive bandits vs frozen LR, simple sign-reversal simulator, misspecified original feature map.
+\item Replay CTR is descriptive; SNIPS finite-sample bias is not waived; seed spread is not a population interval.
+\item All artifacts and hashes are shipped; \texttt{./run.sh} $\to$ \texttt{./build\_report.sh} $\to$ \texttt{verify\_consistency.py}.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusion and extensions}
+\begin{enumerate}
+\item On this Yahoo slice, neither Hybrid nor Window demonstrates a CTR advantage; the paper's sparse-data regime is probed separately.
+\item In controlled drift, Window-300 reduces regret under both specified changes; the stationary gain is representation-dependent.
+\item \textbf{Theory:} bound the stale-data term under variation and support assumptions; do not reuse stationary UCB guarantees after drift.
+\item \textbf{Algorithm:} discounted/restarted variants, time-varying $\beta$, new-article cold starts, low-rank article embeddings.
+\item \textbf{Application:} longer logs with propensities, genuine user IDs and predeclared online evaluation.
+\end{enumerate}
+\vspace{4pt}
+Questions.
+\end{frame}
+\end{document}
