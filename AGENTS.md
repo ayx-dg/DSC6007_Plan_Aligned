@@ -140,7 +140,6 @@ against that PDF. The report must retain the exact identity:
 - Do not modify `project_desc.pdf`, the report title/subtitle, course line, authors, or semester. The report must not exceed 15 pages.
 - Do not modify the sibling directories `../report` or `../code`. This directory is self-contained.
 - Do not confuse `contextual greedy` with the context-free `ε-greedy` used in the paper.
-- Do not directly apply suggestions from the paper-judge drafts to the report.
 - Do not commit `.venv/` or temporary files. They are already listed in `.gitignore`.
 
 `review_paper_judge.json` and `paper_judge_review.md` are **local review evidence and are intentionally not public** (they are already listed in `.gitignore`).
