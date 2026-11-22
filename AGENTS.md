@@ -54,7 +54,7 @@ git push -u origin codex/<your-topic>
 
 5. Follow the installation instructions in the "Reproducing on a Fresh Machine" section. `uv.lock` already locks the dependencies. Do not run `uv lock --upgrade`, and do not commit `.venv/`.
 
-6. The local owner keeps the paper-judge drafts for review. These drafts are not part of the public repository. Agents should not treat suggestions in those drafts as tasks to be completed.
+6. The local owner keeps the paper-judge drafts for review. These drafts are not part of the public repository.
 
 This workflow keeps the local project as the source of truth, ensures that team members' forks contain the same files, and keeps the public repository consistent with the version shown to the instructor. There should be no hidden dependencies that make the project work on one computer but fail on another.
 
@@ -123,9 +123,9 @@ against that PDF. The report must retain the exact identity:
 
 - Submit the current `report.pdf` to `https://paper-judge.netlify.app/` via the
   browser and save C1–C5 in `review_paper_judge.json` and
-  `paper_judge_review.md`, including the reviewed PDF hash. Suggestions are
-  recorded, never auto-applied. These two draft files are **local review
-  evidence only**: they are gitignored and deliberately absent from the public
+  `paper_judge_review.md`, including the reviewed PDF hash. These two draft
+  files are **local review evidence only**: they are gitignored and deliberately
+  absent from the public
   repository. `verify_consistency.py` checks them when present and otherwise
   records a skip note, so a fresh clone still passes.
 - The existing history was created locally with `user.name=ayx` and an empty
