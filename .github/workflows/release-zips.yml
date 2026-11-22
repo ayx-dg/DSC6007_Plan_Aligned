@@ -1,0 +1,51 @@
+name: Release downloadable zips
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release-zips:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build full-repository zip
+        run: git archive --format=zip --output=DSC6007_Plan_Aligned-source.zip HEAD
+
+      - name: Build submission folder zip
+        run: git archive --format=zip --output=submission-folder.zip HEAD submission
+
+      - name: Verify archives
+        run: |
+          unzip -l DSC6007_Plan_Aligned-source.zip | tail -1
+          unzip -l submission-folder.zip | tail -1
+          unzip -l DSC6007_Plan_Aligned-source.zip | grep -q 'webscope-logs.txt'
+          unzip -l DSC6007_Plan_Aligned-source.zip | grep -q 'curves.npz'
+          ! unzip -l DSC6007_Plan_Aligned-source.zip | grep -q 'review_paper_judge.json'
+
+      - name: Publish Release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            TAG="$GITHUB_REF_NAME"
+          else
+            TAG="zips-latest"
+          fi
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" \
+              DSC6007_Plan_Aligned-source.zip submission-folder.zip --clobber
+          else
+            gh release create "$TAG" \
+              DSC6007_Plan_Aligned-source.zip submission-folder.zip \
+              --title "$TAG" --generate-notes
+          fi
