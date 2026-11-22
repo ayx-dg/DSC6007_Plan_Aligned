@@ -7,6 +7,57 @@ only here. Do not edit the sibling `../report`, `../code`, or other project
 files. Everything needed for review, reproduction and submission lives in this
 folder.
 
+## Team Handoff and Working with Codex
+
+The team members have **not yet been added to the GitHub repository**. They also prefer using coding agents such as Codex.
+
+The public repository is read-only for contributors. All changes must go through **fork + Pull Request (PR)**. Each member should first fork the repository to their own GitHub account, work on their fork, and then submit a PR to the original repository. The owner will review and merge the PR.
+
+Recommended workflow:
+
+```bash
+# First, fork https://github.com/ayx-dg/DSC6007_Plan_Aligned on GitHub
+git clone https://github.com/<your-username>/DSC6007_Plan_Aligned.git
+cd DSC6007_Plan_Aligned
+
+# Add the original repository as upstream
+# Sync with upstream before starting new work
+git remote add upstream https://github.com/ayx-dg/DSC6007_Plan_Aligned.git
+git checkout master
+git pull --rebase upstream master
+
+# Create a separate branch instead of working directly on master
+git checkout -b codex/<your-topic>
+# Example: git checkout -b codex/sparsity-figure
+
+# Push your changes to your own fork
+git add -A
+git commit -m "Describe the concrete change"
+git push -u origin codex/<your-topic>
+
+# Then open a PR on GitHub from your fork to ayx-dg/master
+# Wait for the owner to review and merge it
+```
+
+**Handoff instructions for working with Codex agents** (to keep workflows consistent across different computers):
+
+1. Read `README.md` and `AGENTS.md` before making any changes. `AGENTS.md` is the main reference for project rules, including naming conventions, data hashes, data splits, random seeds, report identity, known limitations, and the rule that review suggestions should not be applied automatically.
+
+2. The working directory should be the cloned repository root. Do not look for a `hybrid_aligned/` subdirectory.
+
+3. New members must use their own Git identity when making commits. Previous commits were created by the local agent using `ayx <>`. Do not amend or rewrite those commits through rebasing.
+
+4. Whenever source code is changed, the full workflow specified in `AGENTS.md` must be completed:
+   `./run.sh` → `./build_report.sh` → update the hashes and numbers in `report.tex` → `verify_consistency.py`.
+
+   Even if only figures or report text are changed, the PDF must be rebuilt.
+
+5. Follow the installation instructions in the "Reproducing on a Fresh Machine" section. `uv.lock` already locks the dependencies. Do not run `uv lock --upgrade`, and do not commit `.venv/`.
+
+6. The local owner keeps the paper-judge drafts for review. These drafts are not part of the public repository. Agents should not treat suggestions in those drafts as tasks to be completed.
+
+This workflow keeps the local project as the source of truth, ensures that team members' forks contain the same files, and keeps the public repository consistent with the version shown to the instructor. There should be no hidden dependencies that make the project work on one computer but fail on another.
+
 ## Source of truth for course requirements
 
 The course assignment is `project_desc.pdf` in this folder, copied verbatim from
@@ -83,3 +134,5 @@ against that PDF. The report must retain the exact identity:
   `README.md`; push only to the team repository `ayx-dg/DSC6007_Plan_Aligned`.
 - The public repository root **is** this `hybrid_aligned/` directory. A clone
   lands directly in these files; there is no extra `hybrid_aligned/` layer.
+
+  
